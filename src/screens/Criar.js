@@ -1,7 +1,7 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
-const CreateMenuModal = ({ isVisible, onClose, onCreateEvent, onCreateNote }) => {
+const CreateMenuModal = ({ isVisible, onClose, onCreateEvent, onCreateNote, navigation }) => {
   return (
     <Modal
       animationType="fade"
@@ -9,19 +9,24 @@ const CreateMenuModal = ({ isVisible, onClose, onCreateEvent, onCreateNote }) =>
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>O que você deseja criar agora?</Text>
+      <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+        <View style={styles.centeredView}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>O que você deseja criar agora?</Text>
 
-          <TouchableOpacity style={styles.button} onPress={onCreateEvent}>
-            <Text style={styles.textStyle}>Criar evento</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                  navigation.navigate('CriarEvento')}}>
+                <Text style={styles.textStyle}>Criar evento</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={onCreateNote}>
-            <Text style={[styles.textStyle, styles.textSecondary]}>Criar anotação</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={onCreateNote}>
+                <Text style={[styles.textStyle, styles.textSecondary]}>Criar anotação</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
