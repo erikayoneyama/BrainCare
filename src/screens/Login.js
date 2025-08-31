@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity 
         style={styles.backButton}
         onPress={() => navigation.goBack()}>
-        
+        <Text> </Text>
         </TouchableOpacity>
 
         <View style={styles.imagemView}>

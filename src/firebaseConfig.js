@@ -1,7 +1,6 @@
-// firebaseConfig.js
-
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Adicione esta linha para importar o serviço de autenticação
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 // Sua configuração do Firebase
 const firebaseConfig = {
@@ -15,6 +14,8 @@ const firebaseConfig = {
 
 // Inicialize o Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Obtenha a instância de autenticação
-export const auth = getAuth(app); // Adicione esta linha para exportar o auth
+// Exporte os serviços que serão usados em outras partes do seu aplicativo
+export { auth, db };
