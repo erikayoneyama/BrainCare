@@ -20,7 +20,8 @@ const CreateMenuModal = ({ isVisible, onClose, onCreateEvent, onCreateNote, navi
                 <Text style={styles.textStyle}>Criar evento</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={onCreateNote}>
+              <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={() => {
+                  navigation.navigate('CriarAnotacao')}}>
                 <Text style={[styles.textStyle, styles.textSecondary]}>Criar anotação</Text>
               </TouchableOpacity>
             </View>
