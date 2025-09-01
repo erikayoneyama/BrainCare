@@ -11,27 +11,27 @@ import AddPaciente from '../screens/AddPaciente';
 import AgendaScreen from '../screens/Agenda';
 import ConfiguracoesScreen from '../screens/Configuracoes';
 import Evento from '../screens/Evento';
-// Importar a nova tela de anotação
 import CriarAnotacaoScreen from '../screens/CriarAnotacao';
+import Anotacoes from '../screens/Anotacoes';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Crie uma Stack Navigator para a aba "Criar"
+// Stack dentro da aba Criar
 function CriarStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Criar" component={CriarScreen} />
       <Stack.Screen name="CriarEvento" component={CriarEventoScreen} />
       <Stack.Screen name="AddPaciente" component={AddPaciente} />
-      {/* Adicionar a nova tela CriarAnotacao aqui */}
       <Stack.Screen name="CriarAnotacao" component={CriarAnotacaoScreen} />
       <Stack.Screen name="Evento" component={Evento} />
     </Stack.Navigator>
   );
 }
 
-export default function MainTabs() {
+// Tabs principais
+function Tabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
@@ -44,5 +44,18 @@ export default function MainTabs() {
       <Tab.Screen name="Agenda" component={AgendaScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Configuracoes" component={ConfiguracoesScreen} options={{ headerShown: false }} />
     </Tab.Navigator>
+  );
+}
+
+// Stack global envolvendo Tabs
+export default function MainStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* Tabs principais */}
+      <Stack.Screen name="MainTabs" component={Tabs} />
+      
+      {/* Telas globais acessíveis de qualquer lugar */}
+      <Stack.Screen name="Anotacoes" component={Anotacoes} />
+    </Stack.Navigator>
   );
 }
