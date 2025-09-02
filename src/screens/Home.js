@@ -41,19 +41,19 @@ export default function Home({ navigation }) {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserId(user.uid);
-      try {
-  const userDoc = await getDoc(doc(db, "users", user.uid));
-  if (userDoc.exists()) {
-    setUserName(userDoc.data().name);
-  } else if (user.displayName) {
-    setUserName(user.displayName);
-  }
-} catch (error) {
-  console.error("Erro ao buscar nome do usuário: ", error);
-  if (user.displayName) {
-    setUserName(user.displayName);
-  }
-}
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserName(userDoc.data().name);
+          } else if (user.displayName) {
+            setUserName(user.displayName);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar nome do usuário: ", error);
+          if (user.displayName) {
+            setUserName(user.displayName);
+          }
+        }
 
       } else {
         setUserId(null);
@@ -79,10 +79,9 @@ export default function Home({ navigation }) {
     );
 
     const artigosQuery = query(
-      collection(db, 'artigos'),
-      where('userId', '==', userId),
-      orderBy('data', 'asc')
-    );
+      collection(db, 'artigos'));
+
+    console.log(artigosQuery);
 
     const unsubscribeSnapshot = onSnapshot(eventosQuery, (querySnapshot) => {
       const eventosList = [];
@@ -143,10 +142,10 @@ export default function Home({ navigation }) {
             {userName ? `Olá, ${userName}!` : 'Bem-vindo!'}
           </Text>
         </View>
-        <TouchableOpacity 
-                style={styles.cadastroBottom} 
-                onPress={() => navigation.navigate('Anotacoes')}
-              ></TouchableOpacity>
+        <TouchableOpacity
+          style={styles.cadastroBottom}
+          onPress={() => navigation.navigate('Anotacoes')}
+        ></TouchableOpacity>
         {/* Seção de Próximos Eventos */}
         <View style={styles.consultasView}>
           <Text style={styles.titulosText}>Próximos eventos</Text>
@@ -166,7 +165,7 @@ export default function Home({ navigation }) {
         </View>
 
         {/* Seção de Conteúdos Educativos */}
-        
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -247,15 +246,15 @@ const styles = StyleSheet.create({
   infosCard: {
     flexDirection: 'row'
   },
-  cadastroBottom:{
-    backgroundColor:'#7D00A7',
-    width:'90%',
-    height:45,
-    borderRadius:10,
-    marginTop:20,
-    alignSelf:'center',
-    alignContent:'center',
-    alignItems:'center', 
+  cadastroBottom: {
+    backgroundColor: '#7D00A7',
+    width: '90%',
+    height: 45,
+    borderRadius: 10,
+    marginTop: 20,
+    alignSelf: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
     justifyContent: 'center'
   },
   dataView: {
