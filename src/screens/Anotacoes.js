@@ -18,7 +18,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, onSnapshot, doc, deleteDoc, orderBy } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig'; 
+import { auth, db } from '../firebaseConfig';
 
 export default function Anotacoes({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -126,16 +126,14 @@ export default function Anotacoes({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-         <TouchableOpacity
-                        style={styles.backButton}
-                        onPress={() => navigation.goBack()}>
-        
-                    </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      />
       <View style={styles.container}>
-        <Text style={styles.titulo}>Minhas Anotações</Text>
+        <Text style={styles.titulo}>Anotações</Text>
         
-        {/* Campo de filtro de paciente */}
-        <Text style={styles.filterLabel}>Filtrar por Paciente:</Text>
+        <Text style={styles.filterLabel}>Selecione o paciente:</Text>
         <View style={styles.filterContainer}>
           <TouchableOpacity
             style={styles.filterButton}
@@ -175,7 +173,15 @@ export default function Anotacoes({ navigation }) {
           ) : (
             anotacoes.length > 0 ? (
               anotacoes.map((anotacao) => (
-                <View key={anotacao.id} style={styles.anotacaoCard}>
+                <TouchableOpacity 
+                  key={anotacao.id} 
+                  style={styles.anotacaoCard}
+                  // Corrigido: Agora passamos o nome do paciente para a tela de detalhes.
+                  onPress={() => navigation.navigate('Anotacao', { 
+                    anotacao: anotacao, 
+                    pacienteNome: getPatientName(anotacao.pacienteId) 
+                  })}
+                >
                   <View style={styles.cardHeader}>
                     <Text style={styles.anotacaoTitulo}>{anotacao.titulo}</Text>
                     <TouchableOpacity
@@ -186,19 +192,19 @@ export default function Anotacoes({ navigation }) {
                     </TouchableOpacity>
                   </View>
                   <Text style={styles.patientName}>{getPatientName(anotacao.pacienteId)}</Text>
-                  <Text style={styles.anotacaoConteudo}>{anotacao.conteudo}</Text>
-                  <Text style={styles.anotacaoData}>
-                    {anotacao.createdAt && new Date(anotacao.createdAt.toDate()).toLocaleDateString('pt-BR')}
-                  </Text>
-                </View>
+              
+                  <View style={styles.dataView}>
+                    <Text style={styles.anotacaoData}>
+                      {anotacao.createdAt && new Date(anotacao.createdAt.toDate()).toLocaleDateString('pt-BR')}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               ))
             ) : (
               <Text style={styles.noAnotacoesText}>Nenhuma anotação adicionada ainda.</Text>
             )
           )}
         </ScrollView>
-        
-        
       </View>
     </SafeAreaView>
   );
@@ -215,9 +221,9 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 28,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
-    color: '#7D00A7',
+    color: '#000000ff',
     marginBottom: 5,
   },
   subTitulo: {
@@ -230,7 +236,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
     color: '#555',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   filterContainer: {
     flexDirection: 'row',
@@ -330,7 +336,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     textAlign: 'right',
-    marginTop: 10,
   },
   deleteButton: {
     padding: 5,
@@ -359,11 +364,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
   },
   backButton: {
-        backgroundColor: '#E9E9E9',
-        height: 50,
-        width: 50,
-        borderRadius: 10,
-        marginTop: 30,
-        marginLeft: 20
-    },
+    backgroundColor: '#E9E9E9',
+    height: 50,
+    width: 50,
+    borderRadius: 10,
+    marginTop: 30,
+    marginLeft: 20,
+  },
+  dataView: {
+    borderWidth: 1.4,
+    borderColor: '#000',
+    borderRadius: 4,
+    height: 26,
+    width: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 1,
+    marginBottom: 10,
+    marginLeft: 40,
+  },
 });
