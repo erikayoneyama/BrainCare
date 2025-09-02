@@ -43,10 +43,7 @@ export default function Pacientes({ navigation }) {
       "Excluir Paciente",
       "Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.",
       [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
           style: "destructive",
@@ -85,8 +82,11 @@ export default function Pacientes({ navigation }) {
       >
         <Text style={styles.pacienteCardNome}>{item.nome}</Text>
         <Text style={styles.pacienteCardInfo}>Nível: {item.nivel}</Text>
-        <Text style={styles.pacienteCardInfo}>Nasc: {item.dataNascimento.toDate().toLocaleDateString()}</Text>
+        <Text style={styles.pacienteCardInfo}>
+          Nasc: {item.dataNascimento?.toDate ? item.dataNascimento.toDate().toLocaleDateString() : 'Não informado'}
+        </Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.optionsButtonContainer}
         onPress={() => setShowOptionsFor(showOptionsFor === item.id ? null : item.id)}
@@ -115,7 +115,6 @@ export default function Pacientes({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pacientes</Text>
       <TouchableOpacity
         style={styles.navBottom}
         onPress={() => navigation.navigate('CriarTab', { screen: 'AddPaciente' })}
@@ -130,8 +129,8 @@ export default function Pacientes({ navigation }) {
             data={pacientes}
             renderItem={renderPacienteCard}
             keyExtractor={item => item.id}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.pacientesList}
           />
         ) : (
@@ -147,12 +146,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
   },
   navBottom: {
     backgroundColor: '#7D00A7',
@@ -179,16 +172,25 @@ const styles = StyleSheet.create({
   },
   pacientesList: {
     alignItems: 'center',
+    paddingBottom: 20,
   },
   pacienteCard: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 15,
-    marginRight: 15,
-    width: 150,
+    marginBottom: 15,
+    width: 360,
+    alignSelf: 'center',
     height: 100,
     justifyContent: 'center',
+    elevation: 3, 
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
     position: 'relative',
+    overflow: 'visible',
+    marginTop:10,
+    
   },
   cardContent: {
     flex: 1,
@@ -214,10 +216,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#555',
+    marginRight:10,
   },
   optionsContainer: {
     position: 'absolute',
-    top: 5,
+    top: 25,
     right: 5,
     backgroundColor: 'white',
     borderRadius: 8,
@@ -232,6 +235,7 @@ const styles = StyleSheet.create({
   optionButton: {
     padding: 10,
     borderBottomWidth: 1,
+    marginRight:10,
     borderBottomColor: '#eee',
   },
   optionText: {

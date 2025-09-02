@@ -1,6 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
+import React from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  SafeAreaView, 
+  TouchableOpacity, 
+  ScrollView, 
+  Image 
+} from 'react-native';
+import { 
+  useFonts, 
+  Inter_400Regular, 
+  Inter_500Medium, 
+  Inter_600SemiBold, 
+  Inter_700Bold 
+} from '@expo-google-fonts/inter';
+import { Ionicons } from '@expo/vector-icons'; 
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
+// Import das imagens
+import dataImage from '../../assets/data.png'; 
+import horaImage from '../../assets/hora.png'; 
 
 export default function Evento({ navigation, route }) {
   const [fontsLoaded] = useFonts({
@@ -24,30 +45,57 @@ export default function Evento({ navigation, route }) {
     return null;
   }
 
+  const handleDeleteEvento = async () => {
+    try {
+      await deleteDoc(doc(db, "events", evento.id));
+      console.log("Evento apagado:", evento.id);
+      navigation.goBack(); // volta para a agenda
+    } catch (error) {
+      console.error("Erro ao apagar evento:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.card}>
-          <Text style={styles.title}>{evento.nome}</Text>
+        
+        {/* Botão voltar */}
+        <TouchableOpacity 
+          style={styles.backButton}
+          activeOpacity={0.7}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.label}>Data:</Text>
-            <Text style={styles.infoText}>{evento.data}</Text>
-          </View>
+        {/* Nome do evento */}
+        <Text style={styles.title}>{evento.nome}</Text>
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.label}>Hora:</Text>
-            <Text style={styles.infoText}>{evento.hora}</Text>
-          </View>
-
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.label}>Descrição:</Text>
-            <Text style={styles.descriptionText}>{evento.descricao}</Text>
-          </View>
+        {/* Data */}
+        <View style={styles.infoContainer}>
+          <Image source={dataImage} style={styles.imagem} />
+          <Text style={styles.infoText}>{evento.data}</Text>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Voltar para Agenda</Text>
+        {/* Hora */}
+        <View style={styles.infoContainer}>
+          <Image source={horaImage} style={styles.imagem} />
+          <Text style={styles.infoText}>{evento.hora}</Text>
+        </View>
+
+        {/* Descrição */}
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.label}>Descrição:</Text>
+          <Text style={styles.descriptionText}>{evento.descricao}</Text>
+        </View>
+
+        {/* Botão apagar evento */}
+        <TouchableOpacity 
+          style={styles.button} 
+          activeOpacity={0.7}
+          onPress={handleDeleteEvento}
+        >
+          <Text style={styles.buttonText}>Apagar evento</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -58,39 +106,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    paddingHorizontal: 35,
   },
   scrollContainer: {
     flexGrow: 1,
-    padding: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
   },
   title: {
-    fontSize: 28,
-    fontFamily: 'Inter_700Bold',
-    color: '#8A38F5',
-    textAlign: 'center',
+    fontSize: 35,
+    fontFamily: 'Inter_500Medium',
+    color: '#000',
     marginBottom: 20,
+    marginTop: 40,
+    textAlign: 'left',
   },
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
   },
+  imagem: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+    resizeMode: 'contain',
+  },
   label: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: 'Inter_600SemiBold',
     color: '#000',
     marginRight: 10,
+    marginBottom:10
   },
   infoText: {
     fontSize: 18,
@@ -98,7 +143,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   descriptionContainer: {
-    marginTop: 15,
+    marginTop: 25,
   },
   descriptionText: {
     fontSize: 16,
@@ -112,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 30,
   },
   buttonText: {
     fontSize: 16,
@@ -124,5 +169,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
     marginTop: 50,
+  },
+  backButton: {
+    backgroundColor: '#E9E9E9',
+    height: 50, 
+    width: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
   },
 });
