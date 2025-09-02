@@ -22,6 +22,7 @@ import { db } from '../firebaseConfig';
 // Import das imagens
 import dataImage from '../../assets/data.png'; 
 import horaImage from '../../assets/hora.png'; 
+import Agenda from './Agenda';
 
 export default function Evento({ navigation, route }) {
   const [fontsLoaded] = useFonts({
@@ -49,7 +50,7 @@ export default function Evento({ navigation, route }) {
     try {
       await deleteDoc(doc(db, "events", evento.id));
       console.log("Evento apagado:", evento.id);
-      navigation.goBack(); // volta para a agenda
+      navigation.navigate('Agenda'); // volta para a agenda
     } catch (error) {
       console.error("Erro ao apagar evento:", error);
     }

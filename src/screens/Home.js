@@ -6,8 +6,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image,
   ActivityIndicator,
+  Image,
+  Alert
 } from 'react-native';
 import {
   Inter_400Regular,
@@ -33,7 +34,9 @@ export default function Home({ navigation }) {
 
   const [userName, setUserName] = useState('');
   const [eventos, setEventos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [artigos, setArtigos] = useState([]);
+  const [loadingEventos, setLoadingEventos] = useState(true);
+  const [loadingArtigos, setLoadingArtigos] = useState(true);
   const [userId, setUserId] = useState(null);
 
   // Lógica para buscar o nome do usuário
@@ -54,7 +57,6 @@ export default function Home({ navigation }) {
             setUserName(user.displayName);
           }
         }
-
       } else {
         setUserId(null);
         setUserName('');
@@ -66,22 +68,17 @@ export default function Home({ navigation }) {
   // Lógica para buscar os eventos
   useEffect(() => {
     if (!userId) {
-      setLoading(false);
+      setLoadingEventos(false);
       return;
     }
 
-    setLoading(true);
+    setLoadingEventos(true);
 
     const eventosQuery = query(
       collection(db, 'events'),
       where('userId', '==', userId),
       orderBy('data', 'asc')
     );
-
-    const artigosQuery = query(
-      collection(db, 'artigos'));
-
-    console.log(artigosQuery);
 
     const unsubscribeSnapshot = onSnapshot(eventosQuery, (querySnapshot) => {
       const eventosList = [];
@@ -95,14 +92,41 @@ export default function Home({ navigation }) {
         });
       });
       setEventos(eventosList);
-      setLoading(false);
+      setLoadingEventos(false);
     }, (error) => {
       console.error("Erro ao carregar eventos: ", error);
-      setLoading(false);
+      setLoadingEventos(false);
     });
 
     return () => unsubscribeSnapshot();
   }, [userId]);
+
+  // Lógica para buscar os artigos
+  useEffect(() => {
+    const artigosQuery = query(collection(db, 'artigos'));
+
+    const unsubscribeArtigos = onSnapshot(artigosQuery, (querySnapshot) => {
+      const artigosList = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        artigosList.push({
+          id: doc.id,
+          titulo: data.tituloArt,
+          descricao: data.descricao,
+          autor: data.autor,
+          conteudo: data.conteudo,
+          imagem: data.imagem, // Certifique-se de que a URL da imagem está sendo buscada
+        });
+      });
+      setArtigos(artigosList);
+      setLoadingArtigos(false);
+    }, (error) => {
+      console.error("Erro ao carregar artigos: ", error);
+      setLoadingArtigos(false);
+    });
+
+    return () => unsubscribeArtigos();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -142,15 +166,20 @@ export default function Home({ navigation }) {
             {userName ? `Olá, ${userName}!` : 'Bem-vindo!'}
           </Text>
         </View>
+
+        {/* Botão rápido */}
         <TouchableOpacity
           style={styles.cadastroBottom}
           onPress={() => navigation.navigate('Anotacoes')}
-        ></TouchableOpacity>
+        >
+          <Text style={{ color: 'white', fontFamily: 'Inter_500Medium' }}>Minhas Anotações</Text>
+        </TouchableOpacity>
+
         {/* Seção de Próximos Eventos */}
         <View style={styles.consultasView}>
           <Text style={styles.titulosText}>Próximos eventos</Text>
           <View style={styles.consultasScrollView}>
-            {loading ? (
+            {loadingEventos ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
@@ -165,14 +194,46 @@ export default function Home({ navigation }) {
         </View>
 
         {/* Seção de Conteúdos Educativos */}
-
+        <Text style={[styles.titulosText, { marginTop: 40 }]}>Conteúdos educativos</Text>
+        <View style={{ marginTop: 30 }}>
+          {loadingArtigos ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          ) : artigos.length > 0 ? (
+            artigos.map((artigo) => (
+              <TouchableOpacity
+                key={artigo.id}
+                style={styles.artigosView}
+                onPress={() => navigation.navigate('ArtigoDetalhes', { artigo })}
+              >
+                <View style={styles.artigoInfos}>
+                  {/* CORREÇÃO AQUI */}
+                  <Image 
+                    source={{ uri: artigo.imagem }} 
+                    style={styles.fotinha}
+                    onError={(e) => console.log('Erro ao carregar imagem:', e.nativeEvent.error)}
+                  />
+                  <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 16, color: 'black' }}>
+                    {artigo.titulo}
+                  </Text>
+                  <Text style={styles.artigoText} numberOfLines={3}>
+                    {artigo.descricao}
+                  </Text>
+                  <Text style={styles.artigoData}>Autor: {artigo.autor}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noEventsText}>Nenhum conteúdo disponível.</Text>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  // ... seus estilos existentes ...
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -285,12 +346,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     marginBottom: 10
   },
-  conteudoView: {
-    marginTop: 5,
-  },
   artigosView: {
     width: '95%',
-    height: 190,
+    height: 150,
     backgroundColor: 'white',
     borderRadius: 19,
     marginBottom: 20,
@@ -299,12 +357,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     alignSelf: 'center',
-    padding: 10,
-    flexDirection: 'row',
+    padding: 15,
+    justifyContent: 'center'
   },
   artigoInfos: {
-    marginLeft: 10,
-    width: '60%'
+    width: '100%'
   },
   artigoText: {
     color: "black",
@@ -316,18 +373,10 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 11,
     fontFamily: 'Inter_400Regular',
-    marginTop: 16
-  },
-  artigoImage: {
-    height: '100%',
-    width: 130,
-    borderRadius: 15
+    marginTop: 10
   },
   margin: {
     marginBottom: 20
-  },
-  artigoMargin: {
-    marginTop: 50
   },
   loadingContainer: {
     flex: 1,
@@ -341,4 +390,9 @@ const styles = StyleSheet.create({
     color: '#888',
     fontFamily: 'Inter_400Regular',
   },
+  fotinha: {
+    height: 50,
+    width: 50, // Adicionei uma largura para a imagem aparecer
+    resizeMode: 'contain', // Recomendo 'contain' para se ajustar ao container
+  }
 });

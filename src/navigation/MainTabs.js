@@ -14,6 +14,7 @@ import Evento from '../screens/Evento';
 import CriarAnotacaoScreen from '../screens/CriarAnotacao';
 import Anotacoes from '../screens/Anotacoes';
 import Anotacao from '../screens/Anotacao';
+import ArtigoDetalhes from '../screens/ArtigoDetalhes';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -58,6 +59,7 @@ export default function MainStack() {
       {/* Telas globais acessíveis de qualquer lugar */}
       <Stack.Screen name="Anotacoes" component={Anotacoes} />
       <Stack.Screen name="Anotacao" component={Anotacao} />
+      <Stack.Screen name="ArtigoDetalhes" component={ArtigoDetalhes} />
     </Stack.Navigator>
   );
 }
