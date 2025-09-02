@@ -73,6 +73,19 @@ export default function Pacientes({ navigation }) {
   const handleViewAgenda = (pacienteId) => {
     navigation.navigate('Agenda', { pacienteId });
   };
+  
+  const getLevelColor = (level) => {
+    switch (level) {
+      case 'Grave':
+        return 'red';
+      case 'Moderado':
+        return 'orange';
+      case 'Leve':
+        return 'green';
+      default:
+        return '#ffffffff';
+    }
+  };
 
   const renderPacienteCard = ({ item }) => (
     <View style={styles.pacienteCard}>
@@ -81,10 +94,22 @@ export default function Pacientes({ navigation }) {
         onPress={() => handleViewAgenda(item.id)}
       >
         <Text style={styles.pacienteCardNome}>{item.nome}</Text>
-        <Text style={styles.pacienteCardInfo}>Nível: {item.nivel}</Text>
-        <Text style={styles.pacienteCardInfo}>
-          Nasc: {item.dataNascimento?.toDate ? item.dataNascimento.toDate().toLocaleDateString() : 'Não informado'}
-        </Text>
+        <View style={styles.levelContainer}>
+
+          <View style={styles.row}>
+            <View style={[styles.viewNivel, {backgroundColor:getLevelColor(item.nivel)}]}>
+              <Text style={styles.nivelText}>
+                {item.nivel}
+              </Text>
+              </View>
+              
+          </View>
+          <View style={styles.viewNascimento}>
+            <Text style={styles.nascimentoText}>
+              {item.dataNascimento?.toDate ? item.dataNascimento.toDate().toLocaleDateString() : 'Não informado'}
+            </Text>
+          </View>
+          </View>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -160,6 +185,7 @@ const styles = StyleSheet.create({
   navText: {
     color: 'white',
     fontSize: 15,
+    fontFamily:'Inter_400Regular'
   },
   pacientesContainer: {
     flex: 1,
@@ -190,7 +216,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'visible',
     marginTop:10,
-    
   },
   cardContent: {
     flex: 1,
@@ -205,6 +230,10 @@ const styles = StyleSheet.create({
   pacienteCardInfo: {
     fontSize: 12,
     color: '#555',
+  },
+  levelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   optionsButtonContainer: {
     position: 'absolute',
@@ -253,5 +282,38 @@ const styles = StyleSheet.create({
     color: '#888',
     textAlign: 'center',
     marginTop: 20,
+  },
+  viewNivel:{
+    height:23,
+    width:50,
+    justifyContent:'center',
+    alignContent:'center',
+    borderRadius:6,
+  },
+  nivelText: {
+    fontSize: 12,
+    color: '#ffffffff',
+    fontFamily:'Inter_500Medium',
+    alignSelf:'center',
+  },
+  viewNascimento:{
+    height:23,
+    width:90,
+    justifyContent:'center',
+    alignContent:'center',
+    borderRadius:6,
+    backgroundColor: '#E9E9E9',
+    marginLeft:15,
+    marginTop:10
+  },
+  row:{
+    flexDirection:'row',
+    marginTop:10
+  },
+  nascimentoText: {
+    fontSize: 12,
+    color: '#000000ff',
+    fontFamily:'Inter_500Medium',
+    alignSelf:'center',
   },
 });

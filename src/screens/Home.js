@@ -78,6 +78,12 @@ export default function Home({ navigation }) {
       orderBy('data', 'asc')
     );
 
+    const artigosQuery = query(
+      collection(db, 'artigos'),
+      where('userId', '==', userId),
+      orderBy('data', 'asc')
+    );
+
     const unsubscribeSnapshot = onSnapshot(eventosQuery, (querySnapshot) => {
       const eventosList = [];
       querySnapshot.forEach((doc) => {

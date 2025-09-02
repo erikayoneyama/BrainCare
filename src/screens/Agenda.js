@@ -23,7 +23,7 @@ export default function Agenda({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [pacienteId, setPacienteId] = useState(null);
-  const [pacienteNome, setPacienteNome] = useState('Todos os Pacientes');
+  const [pacienteNome, setPacienteNome] = useState('Agenda');
 
   // Escuta a autenticação para obter o ID do usuário
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function Agenda({ navigation, route }) {
       getPacienteNome();
     } else {
       setPacienteId(null);
-      setPacienteNome('Todos os Pacientes');
+      setPacienteNome('');
     }
   }, [route.params?.pacienteId]);
 
@@ -127,8 +127,12 @@ export default function Agenda({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>{`Agenda de\n${pacienteNome}`}</Text>
-      
+      <View style={styles.containerTitulo}>
+        <Text style={styles.titulo}>{`Agenda - ${pacienteNome}`}</Text>
+        <Text style={styles.tituloText}> Aqui você encontra todos os eventos e compromissos importantes relacionados 
+          ao cuidado com o paciente. Acompanhe datas, horários e descrições de atividades para manter sua rotina organizada 
+          e garantir que nada passe despercebido.</Text>
+      </View>
       <FlatList
         data={eventos}
         keyExtractor={(item) => item.id}
@@ -161,7 +165,7 @@ export default function Agenda({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffffff',
     paddingTop: 20,
   },
   loadingContainer: {
@@ -170,11 +174,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titulo: {
-    fontSize: 24,
-    fontFamily: 'Inter_700Bold',
-    textAlign: 'center',
-    marginBottom: 10,
+    fontSize: 30,
+    fontFamily: 'Inter_600SemiBold',
     color: '#000',
+  },
+  containerTitulo:{
+    padding:10,
+    marginLeft: 10,
+    marginTop:10
+  },
+  tituloText:{
+    fontSize:12,
+    fontFamily:'Inter_400Regular',
+    color:'#808080',
+    textAlign: 'justify',
+    marginRight:12,
+    marginTop:20,
+    marginBottom:10
   },
   eventoCard: {
     backgroundColor: '#fff',
