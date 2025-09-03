@@ -33,4 +33,4 @@ Proporcionar uma experiência centralizada e prática, que:
 - Firebase (Autenticação e Firestore)  
 - Expo  
 - Google Fonts (Inter)  
-
+- Figma
