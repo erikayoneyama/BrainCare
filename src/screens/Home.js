@@ -39,7 +39,7 @@ export default function Home({ navigation }) {
   const [loadingArtigos, setLoadingArtigos] = useState(true);
   const [userId, setUserId] = useState(null);
 
-  // Lógica para buscar o nome do usuário
+  // 🔑 Buscar nome do usuário
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -65,7 +65,7 @@ export default function Home({ navigation }) {
     return () => unsubscribeAuth();
   }, []);
 
-  // Lógica para buscar os eventos
+  // 🔑 Buscar eventos
   useEffect(() => {
     if (!userId) {
       setLoadingEventos(false);
@@ -101,7 +101,7 @@ export default function Home({ navigation }) {
     return () => unsubscribeSnapshot();
   }, [userId]);
 
-  // Lógica para buscar os artigos
+  // 🔑 Buscar artigos
   useEffect(() => {
     const artigosQuery = query(collection(db, 'artigos'));
 
@@ -115,7 +115,8 @@ export default function Home({ navigation }) {
           descricao: data.descricao,
           autor: data.autor,
           conteudo: data.conteudo,
-          imagem: data.imagem, // Certifique-se de que a URL da imagem está sendo buscada
+          imagem: data.imagem,
+          dataArt: data.dataArt ? data.dataArt.toDate().toLocaleDateString('pt-BR') : null, // 👈 Aqui pega a data
         });
       });
       setArtigos(artigosList);
@@ -160,7 +161,7 @@ export default function Home({ navigation }) {
   return (
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Seção de saudação do usuário */}
+        {/* Saudação */}
         <View style={styles.welcomeView}>
           <Text style={styles.welcomeTitle}>
             {userName ? `Olá, ${userName}!` : 'Bem-vindo!'}
@@ -168,14 +169,22 @@ export default function Home({ navigation }) {
         </View>
 
         {/* Botão rápido */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
         <TouchableOpacity
-          style={styles.cadastroBottom}
+          style={styles.anotacaoBottom}
           onPress={() => navigation.navigate('Anotacoes')}
         >
           <Text style={{ color: 'white', fontFamily: 'Inter_500Medium' }}>Minhas Anotações</Text>
         </TouchableOpacity>
 
-        {/* Seção de Próximos Eventos */}
+        <TouchableOpacity
+          style={styles.bibliotecaBottom}
+          onPress={() => navigation.navigate('Biblioteca')}
+        >
+          <Text style={{ color: 'white', fontFamily: 'Inter_500Medium' }}>Biblioteca</Text>
+        </TouchableOpacity>
+        </ScrollView>
+        {/* Eventos */}
         <View style={styles.consultasView}>
           <Text style={styles.titulosText}>Próximos eventos</Text>
           <View style={styles.consultasScrollView}>
@@ -193,7 +202,7 @@ export default function Home({ navigation }) {
           </View>
         </View>
 
-        {/* Seção de Conteúdos Educativos */}
+        {/* Artigos */}
         <Text style={[styles.titulosText, { marginTop: 40 }]}>Conteúdos educativos</Text>
         <View style={{ marginTop: 30 }}>
           {loadingArtigos ? (
@@ -208,19 +217,25 @@ export default function Home({ navigation }) {
                 onPress={() => navigation.navigate('ArtigoDetalhes', { artigo })}
               >
                 <View style={styles.artigoInfos}>
-                  {/* CORREÇÃO AQUI */}
-                  <Image 
-                    source={{ uri: artigo.imagem }} 
-                    style={styles.fotinha}
-                    onError={(e) => console.log('Erro ao carregar imagem:', e.nativeEvent.error)}
-                  />
-                  <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 16, color: 'black' }}>
-                    {artigo.titulo}
-                  </Text>
-                  <Text style={styles.artigoText} numberOfLines={3}>
-                    {artigo.descricao}
-                  </Text>
-                  <Text style={styles.artigoData}>Autor: {artigo.autor}</Text>
+                  <View style={styles.rowArtigo}>
+                    <Image 
+                      source={{ uri: artigo.imagem }} 
+                      style={styles.artImage}
+                      onError={(e) => console.log('Erro ao carregar imagem:', e.nativeEvent.error)}
+                    />
+                    <View style={styles.artigoView}>
+                      <Text style={styles.tituloArtigo}>
+                        {artigo.titulo}
+                      </Text>
+                      <Text style={styles.artigoText} numberOfLines={3}>
+                        {artigo.descricao}
+                      </Text>
+                      <Text style={styles.artigoData}>Autor: {artigo.autor}</Text>
+                      {artigo.dataArt && (
+                        <Text style={styles.artigoData}>Publicado em: {artigo.dataArt}</Text>
+                      )}
+                    </View>
+                  </View>
                 </View>
               </TouchableOpacity>
             ))
@@ -289,7 +304,7 @@ const styles = StyleSheet.create({
     color: 'black'
   },
   consultaBottom: {
-    backgroundColor: '#8A38F5',
+    backgroundColor: '#7D00A7',
     height: 33,
     width: 130,
     borderRadius: 25,
@@ -297,6 +312,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5
   },
+  
   botaoText: {
     color: 'white',
     fontSize: 13,
@@ -307,8 +323,19 @@ const styles = StyleSheet.create({
   infosCard: {
     flexDirection: 'row'
   },
-  cadastroBottom: {
+  anotacaoBottom: {
     backgroundColor: '#7D00A7',
+    width: '90%',
+    height: 45,
+    borderRadius: 10,
+    marginTop: 20,
+    alignSelf: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  bibliotecaBottom: {
+    backgroundColor: '#8A38F5',
     width: '90%',
     height: 45,
     borderRadius: 10,
@@ -357,7 +384,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     alignSelf: 'center',
-    padding: 15,
+    padding: 8,
     justifyContent: 'center'
   },
   artigoInfos: {
@@ -367,13 +394,17 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     fontFamily: 'Inter_400Regular',
-    marginTop: 7
+    marginTop: 7,
+    marginLeft:10,
+    textAlign: 'justify',
+
   },
   artigoData: {
     color: "black",
     fontSize: 11,
     fontFamily: 'Inter_400Regular',
-    marginTop: 10
+    marginTop: 5,
+    marginLeft:10,
   },
   margin: {
     marginBottom: 20
@@ -390,9 +421,26 @@ const styles = StyleSheet.create({
     color: '#888',
     fontFamily: 'Inter_400Regular',
   },
-  fotinha: {
-    height: 50,
-    width: 50, // Adicionei uma largura para a imagem aparecer
-    resizeMode: 'contain', // Recomendo 'contain' para se ajustar ao container
+  artImage: {
+    height: '100%',
+    width: '30%',
+    borderRadius: 10,
+    alignSelf:'center',
+  }, 
+  rowArtigo:{
+    flexDirection:'row',
+  },
+  artigoView:{
+    flexDirection:'column',
+    width:230,
+    padding:3,
+     justifyContent: 'space-between',
+  },
+  tituloArtigo:{
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    color: 'black',
+    marginLeft:10,
+    textAlign: 'justify',
   }
 });

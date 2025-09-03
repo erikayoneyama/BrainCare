@@ -15,6 +15,7 @@ import CriarAnotacaoScreen from '../screens/CriarAnotacao';
 import Anotacoes from '../screens/Anotacoes';
 import Anotacao from '../screens/Anotacao';
 import ArtigoDetalhes from '../screens/ArtigoDetalhes';
+import Biblioteca from '../screens/Biblioteca';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -28,6 +29,7 @@ function CriarStack() {
       <Stack.Screen name="AddPaciente" component={AddPaciente} />
       <Stack.Screen name="CriarAnotacao" component={CriarAnotacaoScreen} />
       <Stack.Screen name="Evento" component={Evento} />
+      <Stack.Screen name="Biblioteca" component={Biblioteca} />
     </Stack.Navigator>
   );
 }
@@ -60,6 +62,7 @@ export default function MainStack() {
       <Stack.Screen name="Anotacoes" component={Anotacoes} />
       <Stack.Screen name="Anotacao" component={Anotacao} />
       <Stack.Screen name="ArtigoDetalhes" component={ArtigoDetalhes} />
+       <Stack.Screen name="Biblioteca" component={Biblioteca} />
     </Stack.Navigator>
   );
 }
