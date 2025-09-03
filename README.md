@@ -1,5 +1,8 @@
 # Aplicativo de Apoio a Cuidadores de Pacientes com Alzheimer
 
+## Integrantes
+Érika Rodrigues, Érika Yoneyama, Flavia Eduarda e Kaua Looze
+
 ## Descrição
 
 Cuidar de um paciente com Alzheimer é uma tarefa que exige dedicação constante, atenção a detalhes e grande responsabilidade emocional. Muitos cuidadores, sejam familiares ou profissionais, enfrentam o desafio de conciliar a rotina intensa de cuidados com a própria vida pessoal, o que frequentemente gera sobrecarga, estresse e desorganização. A falta de ferramentas acessíveis que unam pacientes com cuidadores, agenda de compromissos e materiais educativos acaba tornando o processo ainda mais desgastante.
